@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+	<!--
+	作者：github.com/WangEn
+	时间：2018-02-02
+	描述：树形菜单的引入，分享自http://fly.layui.com/jie/17979/
+	-->
+	<head>
+		<meta charset="UTF-8">
+		<title>文章分类-WeAdmin Frame型后台管理系统-WeAdmin 1.0</title>
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<link rel="stylesheet" href="/static/css/font.css">
+		<link rel="stylesheet" href="/static/css/weadmin.css">
+		<link rel="stylesheet" href="/static/css/jquery.jsonview.css">
+		<link rel="stylesheet" href="/pages/redisItem/category.css">
+		<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+		<!--[if lt IE 9]>
+	      <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+	      <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+	    <![endif]-->
+	</head>
+
+	<body>
+		<div class="weadmin-nav">
+			<span class="layui-breadcrumb">
+		        <a href="">首页</a>
+		        <a href="">文章管理</a>
+		        <a><cite>分类管理</cite></a>
+		    </span>
+			<a class="layui-btn layui-btn-sm" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+				<i class="layui-icon" style="line-height:30px">ဂ</i></a>
+		</div>
+		<div class="weadmin-body">
+			<div class="layui-row layui-col-space1">
+				<div class="layui-col-xs3">
+					<ul class="layui-field-box" lay-filter="test" id="keyList" style="height: 600px;overflow-y:scroll;">
+						<li class="layui-nav-child">key列表</li>
+					</ul>
+				</div>
+
+				<div class="layui-col-xs9" style="padding: 8px;" id="printVal">
+					
+					<pre class="printVal" id="printString"></pre>
+					<div class="printVal" id="printMap"></div>
+					<div style="height: 600px;">
+						<form class="layui-form" action="" style="display: flex; flex-flow:column; height: 100%;">
+							<div class="layui-form-item">
+								<label class="layui-form-label" id="seyType">none</label>
+								<div class="layui-input-block">
+									<input type="text" id="key" required  lay-verify="required" placeholder="key" autocomplete="off" class="layui-input">
+								</div>
+							</div>
+
+							<div>
+								<div class="layui-form-item">
+									<table id="items" lay-filter="items"></table>
+								</div>
+							</div>
+
+							<div class="layui-form-item">
+								<input type="text" id="subKey" style="width: 25%;" required lay-verify="required" placeholder="" autocomplete="off" class="layui-input floatLeft">
+
+								<div class="layui-input-block floatRight" style="width: 25%; margin-left: 5px;">
+									<select name="showText" lay-verify="required" lay-filter="showText">
+										<option value="text">text</option>
+										<option value="php-unserialize">php-unserialize</option>
+										<option value="json">json</option>
+									</select>
+								</div>
+								<label class="layui-form-label floatRight">文本格式</label>
+							</div>
+
+							<div class="layui-form-item" style="flex: 1; margin-bottom:0; border: 1px solid #eee; border-radius: 2px;">
+								<pre id="content" contentEditable="true" style="padding: 5px; height: calc(100% - 10px); max-height: 300px; overflow: auto;"></pre>
+								<div id="json" contentEditable="true"></div>
+							</div>
+
+						</form>
+					</div>
+				</div>
+			</div>
+	
+		</div>
+		<script src="/lib/layui/layui.js" charset="utf-8"></script>
+		<script src="/static/js/extends/unserialize.js"></script>
+		<script src="/static/js/extends/serialize.js"></script>
+		<script src="/pages/redisItem/category.js" type="text/javascript" charset="utf-8"></script>
+	</body>
+
+</html>
