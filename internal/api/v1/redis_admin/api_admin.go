@@ -59,3 +59,8 @@ func (r *api_admin) RuleStore(ctx *gin.Context) (int, gin.H, string) {
 
 	return http_state, gin_H, ""
 }
+
+func (r *api_admin) Migrate(ctx *gin.Context) (int, gin.H, string) {
+	admin.Migrate()
+	return 200, gin.H{"user": "a", "value": "Info"}, ""
+}

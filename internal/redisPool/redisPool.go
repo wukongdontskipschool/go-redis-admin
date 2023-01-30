@@ -2,6 +2,8 @@ package redisPool
 
 import (
 	"fmt"
+	"sync"
+
 	"github.com/go-redis/redis/v8"
 )
 
@@ -12,6 +14,7 @@ type ConnectConf struct {
 	Auth string
 }
 
+var lock sync.Mutex
 var all_pool map[string]*redis.Client
 
 func init() {
@@ -19,6 +22,9 @@ func init() {
 }
 
 func Get_redis(conf *ConnectConf) *redis.Client {
+	lock.Lock()
+	defer lock.Unlock()
+
 	var rd_pool *redis.Client
 	var has bool
 

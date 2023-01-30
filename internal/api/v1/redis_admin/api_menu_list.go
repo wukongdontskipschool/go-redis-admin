@@ -14,7 +14,7 @@ type api_menu_list struct {
 }
 
 func (r *api_menu_list) Index(ctx *gin.Context) (int, gin.H, string) {
-	var uId uint = 5
+	var uId uint = 1
 	http_state, gin_H := menu_list.Get_list(uId)
 
 	return http_state, gin_H, ""

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"redisadmin/internal/configs"
+	"sync"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -18,6 +19,8 @@ type ConnectConf struct {
 	Charset string `yaml:"charset"`
 }
 
+var lock sync.Mutex
+
 // map[路径]map[库标志]connectConf
 var all_configs map[string]map[string]ConnectConf
 
@@ -26,6 +29,9 @@ func init() {
 }
 
 func Get_db(path string, name string) (db *gorm.DB, err error) {
+	lock.Lock()
+	defer lock.Unlock()
+
 	var confMap map[string]ConnectConf
 	var has bool
 	confMap, has = all_configs[path]

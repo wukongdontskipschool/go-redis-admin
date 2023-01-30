@@ -53,10 +53,10 @@ func SetupRouter() *gin.Engine {
 
 		v1.GET("/admin/rule", base_api.Deal_request(redis_admin.Api_admin.RuleIndex))
 		v1.POST("/admin/rule", base_api.Deal_request(redis_admin.Api_admin.RuleStore))
+		v1.GET("/admin/migrate", base_api.Deal_request(redis_admin.Api_admin.Migrate))
 
 		v1.GET("/redisList", base_api.Deal_request(redis_admin.Api_redis_list.Index))
 		v1.POST("/redisList", base_api.Deal_request(redis_admin.Api_redis_list.Store))
-		v1.GET("/redisList/migrate", base_api.Deal_request(redis_admin.Api_redis_list.Migrate))
 
 		v1.GET("/redisItem/indexHtml/:typeId", base_api.Deal_request(redis_admin.Api_redis_item.IndexHtml))
 		v1.GET("/redisItem/redisList/:typeId", base_api.Deal_request(redis_admin.Api_redis_item.Get_Rdis_list))

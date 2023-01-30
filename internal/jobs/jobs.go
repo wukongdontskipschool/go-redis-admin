@@ -5,6 +5,7 @@ import (
 	"redisadmin/internal/databases"
 	"redisadmin/internal/databases/go_redis_admin"
 	"redisadmin/internal/redisPool"
+	"sync"
 )
 
 // 数据库中redis的地址
@@ -15,9 +16,14 @@ func init() {
 	redis_db_conf = make(map[int]*redisPool.ConnectConf)
 }
 
+var lock sync.Mutex
+
 // 从数据库获取redis链接配置
 // @param id RedisList表的id
 func Get_redis_connect_conf_from_db(id int) (*redisPool.ConnectConf, error) {
+	lock.Lock()
+	defer lock.Unlock()
+
 	var conf *redisPool.ConnectConf
 	var has bool
 

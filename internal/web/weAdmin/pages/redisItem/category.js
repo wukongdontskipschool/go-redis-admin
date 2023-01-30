@@ -29,7 +29,7 @@ layui.use(['treeGird', 'jquery', 'admin', 'layer', 'table', 'form', 'jsonview'],
 	var url = new URL(window.location.href);
 	console.log(url.searchParams.get("type"));
 	
-	var rdId = 3
+	var rdId = 1
 	$.ajax({
 		type: "GET",
 		url: "/v1/redisItem/keys/" + rdId,
