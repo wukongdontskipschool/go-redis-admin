@@ -43,13 +43,56 @@ func init() {
 	Enforcer.LoadPolicy()
 }
 
+// 加规则
 func AddPolicy(sub string, obj string, act string) (ok bool, err error) {
 	ok, err = Enforcer.AddPolicy(sub, obj, act)
 	return
+}
+
+// 批量加
+func AddNamedPolicies(rules [][]string) (ok bool, err error) {
+	// rules = [][]string{
+	// 	[]string{"jack", "data4", "read"},
+	// 	[]string{"katy", "data4", "write"},
+	// 	[]string{"leyo", "data4", "read"},
+	// 	[]string{"ham", "data4", "write"},
+	// }
+
+	ok, err = Enforcer.AddNamedPolicies("p", rules)
+	return
+}
+
+// 获取角色权限列表
+func GetPolicyByRole(rId string) [][]string {
+	policys := Enforcer.GetFilteredNamedPolicy("p", 0, consts.ROLE_PRE+rId)
+	return policys
 }
 
 //拦截器
 func Authorize(sub string, obj string, act string) (ok bool, err error) {
 	ok, err = Enforcer.Enforce(sub, obj, act)
 	return
+}
+
+// 删除角色权限
+func DeletePermissionsForUser(rId string) (bool, error) {
+	ok, err := Enforcer.DeletePermissionsForUser(consts.ROLE_PRE + rId)
+	return ok, err
+}
+
+// 删除带方法权限
+func DeletePermissionsForActRule(rule string, act string) (ok bool, err error) {
+	return Enforcer.RemoveFilteredPolicy(1, rule, act)
+}
+
+// 删除规则权限
+func DeletePermissionsForRule(rule string) (ok bool, err error) {
+	return Enforcer.RemoveFilteredPolicy(1, rule)
+}
+
+func Test(rId string) bool {
+	// a := Enforcer.GetPermissionsForUser(consts.ROLE_PRE + rId)
+	b, _ := Enforcer.RemoveFilteredPolicy(1, rId)
+	log.Println(b)
+	return false
 }

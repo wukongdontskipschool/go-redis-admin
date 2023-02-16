@@ -58,8 +58,8 @@
 			//自定义验证规则
 			form.verify({
 				name: function (value) {
-					if (value.length < 3) {
-						return '昵称至少得3个字符啊';
+					if (value.length < 2) {
+						return '昵称至少得2个字符啊';
 					}
 				}
 			});
@@ -72,17 +72,14 @@
 			});
 
 			function addUser(data) {
-				$.ajax({
+				admin.ajax({
 					type: "POST",
-					url: "/v1/redisList",
+					url: "/v1/redisTypeList",
 					data: data,
 					success: function (res) {
 						console.log(res)
 						success(res);
 					},
-					error: function (e, msg, codeMsg) {
-						console.log(e, msg, codeMsg)
-					}
 				});
 			}
 
@@ -92,6 +89,7 @@
 					var index = parent.layer.getFrameIndex(window.name);
 					//关闭当前frame
 					parent.layer.close(index);
+					parent.reloadTable();
 				});
 			}
 		});

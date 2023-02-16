@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func Store(name string) (int, gin.H) {
+func TypeStore(name string) (int, gin.H) {
 	db, err := databases.Get_db(consts.DB_RD_AD_CONF, consts.DB_RD_AD_CONF_TAG_AD)
 	if err != nil {
 		return http.StatusInternalServerError, gin.H{"msg": err.Error()}

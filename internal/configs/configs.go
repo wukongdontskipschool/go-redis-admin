@@ -3,6 +3,7 @@ package configs
 import (
 	"fmt"
 	"io/ioutil"
+	"redisadmin/internal/consts"
 	"sync"
 
 	"gopkg.in/yaml.v2"
@@ -35,4 +36,21 @@ func Get_config(name string, out interface{}) error {
 	err = yaml.Unmarshal(bytes, out)
 
 	return err
+}
+
+func GetEnvVal(key string) (val string) {
+	var confMap map[string]string
+
+	err := Get_config(consts.ENV_CONF, &confMap)
+	if err != nil {
+		return
+	}
+
+	var has bool
+	val, has = confMap[key]
+	if !has {
+		val = ""
+	}
+
+	return
 }

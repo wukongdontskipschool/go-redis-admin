@@ -480,14 +480,48 @@ layui.define(['jquery', 'form', 'layer', 'element'], function(exports) {
 		} 
     }
 
-	function getSearch(param) {
-		let url = window.location.search + '&'
-		
-	}
-
 	/**
 	 *@todo Frame内部的按钮点击打开其他frame的tab
 	 */
 
-	exports('admin', {});
+	var obj = {
+		ajax: function (option) {
+			$.ajax({
+				type: option.type,
+				url: option.url,
+				data: option.data,
+				beforeSend: function(request) {
+					// 默认jwt验证
+					if (option.noJwt == undefined) {
+						let jwtToken = localStorage.getItem('jwtToken');
+						request.setRequestHeader("Authorization", jwtToken);
+					}
+
+					if (option.beforeSend != undefined) {
+						option.beforeSend(request);
+					}
+				},
+				success: function(res) {
+					option.success(res);
+				},
+				error: function(e, msg, codeMsg) {
+					if (e.status == 401) {
+						layer.msg("请登录", {icon: 5, time: 1000}, function() {
+							window.top.location.href = '/login.html';
+						});
+						return;
+					}
+
+					if (option.error != undefined) {
+						option.error(e, msg, codeMsg);
+					} else {
+						console.log('adminerr', codeMsg);
+						layer.msg(codeMsg, {icon: 5});
+					}
+				}
+			});
+		}
+	}
+
+	exports('admin', obj);
 });

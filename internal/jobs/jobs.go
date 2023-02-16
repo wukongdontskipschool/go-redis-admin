@@ -40,10 +40,11 @@ func Get_redis_connect_conf_from_db(id int) (*redisPool.ConnectConf, error) {
 		}
 
 		conf = &redisPool.ConnectConf{
-			Desc: list.Desc,
-			Host: list.Host,
-			Port: list.Port,
-			Auth: list.Auth,
+			Desc:   list.Desc,
+			Host:   list.Host,
+			Port:   list.Port,
+			Auth:   list.Auth,
+			RdType: int(list.MenuId),
 		}
 
 		redis_db_conf[id] = conf

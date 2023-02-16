@@ -16,21 +16,34 @@ type api_redis_item struct {
 	base_api.Base_api
 }
 
+func (b *api_redis_item) GetAuthRule(ctx *gin.Context) string {
+	typeId := ctx.Param("typeId")
+	return "/v1/redisItem/redisList/" + typeId
+}
+
 func (r *api_redis_item) Keys(ctx *gin.Context) (int, gin.H, string) {
-	id := ctx.Param("id")
+	id := ctx.Param("rdId")
+	typeId := ctx.Param("typeId")
+	db := ctx.Query("db")
 	macth := ctx.DefaultQuery("macth", "")
 	confId, _ := strconv.Atoi(id)
+	rdType, _ := strconv.Atoi(typeId)
+	rdDb, _ := strconv.Atoi(db)
 
-	state, hash := redis_item.Key_list(confId, macth)
+	state, hash := redis_item.Key_list(rdType, confId, rdDb, macth)
 	return state, hash, ""
 }
 
 func (r *api_redis_item) Get_val(ctx *gin.Context) (int, gin.H, string) {
-	id := ctx.Param("id")
-	key := ctx.Param("key")
+	typeId := ctx.Param("typeId")
+	id := ctx.Param("rdId")
+	key := ctx.Query("key")
+	db := ctx.Query("db")
 	confId, _ := strconv.Atoi(id)
+	rdType, _ := strconv.Atoi(typeId)
+	rdDb, _ := strconv.Atoi(db)
 
-	state, hash := redis_item.Get_val(confId, key)
+	state, hash := redis_item.Get_val(rdType, confId, rdDb, key)
 	return state, hash, ""
 }
 

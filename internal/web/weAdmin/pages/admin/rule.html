@@ -48,101 +48,16 @@
 					<button class="layui-btn" lay-submit="" lay-filter="add"><i class="layui-icon"></i>增加</button>
 				</form>
 			</div>
-			<div class="weadmin-block">
-				<button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
-				<span class="fr" style="line-height:40px">共有数据：88 条</span>
-			</div>
-			<table class="layui-table">
-				<thead>
-					<tr>
-						<th>
-							<div class="layui-unselect header layui-form-checkbox" lay-skin="primary"><i class="layui-icon">&#xe605;</i></div>
-						</th>
-						<th>ID</th>
-						<th>权限规则</th>
-						<th>权限名称</th>
-						<th>所属分类</th>
-						<th>操作</th>
-				</thead>
-				<tbody>
-					<tr>
-						<td>
-							<div class="layui-unselect layui-form-checkbox" lay-skin="primary" data-id='2'><i class="layui-icon">&#xe605;</i></div>
-						</td>
-						<td>1</td>
-						<td>admin/user/userlist</td>
-						<td>会员列表</td>
-						<td>会员相关</td>
-						<td class="td-manage">
-							<a title="编辑" onclick="WeAdminShow('编辑','../404.html')" href="javascript:;">
-								<i class="layui-icon">&#xe642;</i>
-							</a>
-							<a title="删除" onclick="member_del(this,'要删除的id')" href="javascript:;">
-								<i class="layui-icon">&#xe640;</i>
-							</a>
-						</td>
-					</tr>
-				</tbody>
+			<table class="layui-table" id="items">
 			</table>
-			<div class="page">
-				<div>
-					<a class="prev" href="">&lt;&lt;</a>
-					<a class="num" href="">1</a>
-					<span class="current">2</span>
-					<a class="num" href="">3</a>
-					<a class="num" href="">489</a>
-					<a class="next" href="">&gt;&gt;</a>
-				</div>
-			</div>
 		</div>
 		<script src="../../lib/layui/layui.js" charset="utf-8"></script>
-		<!-- <script src="../../static/js/eleDel.js" type="text/javascript" charset="utf-8"></script> -->
-		<script type="text/javascript">
-			layui.extend({
-				admin: '{/}../../static/js/admin'
-			});
-			layui.use(['form', 'layer', 'admin'], function () {
-				var form = layui.form,
-					admin = layui.admin,
-					layer = layui.layer,
-					$ = layui.jquery;
-	
-				form.render();
-				//自定义验证规则
-				form.verify();
-	
-				//监听提交
-				form.on('submit(add)', function (data) {
-					console.log(data);
-					addUser(data.field)
-					return false;
-				});
-	
-				function addUser(data) {
-					$.ajax({
-						type: "POST",
-						url: "/v1/admin/rule",
-						data: data,
-						success: function (res) {
-							console.log(res)
-							success(res);
-						},
-						error: function (e, msg, codeMsg) {
-							console.log(e, msg, codeMsg)
-						}
-					});
-				}
-	
-				function success(res) {
-					layer.alert("增加成功", { icon: 6 }, function () {
-						// 获得frame索引
-						var index = layer.getFrameIndex(window.name);
-						//关闭当前frame
-						layer.close(index);
-					});
-				}
-			});
-		</script>
+		<script src="rule.js" type="text/javascript" charset="utf-8"></script>
 	</body>
 
 </html>
+<script type="text/html" id="dealTpl">
+	<a title="删除" onclick="delItem(this, '{{d.ID}}')" href="javascript:;">
+		<i class="layui-icon">&#xe640;</i>
+	</a>
+</script>

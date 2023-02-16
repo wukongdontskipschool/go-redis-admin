@@ -2,7 +2,6 @@ package redis_item
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"redisadmin/internal/jobs"
 	"redisadmin/internal/redisPool"
@@ -11,19 +10,23 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Key_list(redisId int, match string) (int, gin.H) {
+func Key_list(rdType int, redisId int, rdDb int, match string) (int, gin.H) {
 	conf, err := jobs.Get_redis_connect_conf_from_db(redisId)
 	if err != nil {
-		return http.StatusInternalServerError, gin.H{"msg": fmt.Sprintf("%s", err)}
+		return http.StatusInternalServerError, gin.H{"msg": err.Error()}
 	}
 
-	rd := redisPool.Get_redis(conf)
+	if conf.RdType != rdType {
+		return http.StatusForbidden, gin.H{"msg": "参数错误"}
+	}
 
 	var ctx = context.Background()
+	rd := redisPool.Get_redis(conf, rdDb)
+	defer rd.Close()
 
 	len1, err := rd.DBSize(ctx).Result()
 	if err != nil {
-		return http.StatusInternalServerError, gin.H{"msg": err}
+		return http.StatusInternalServerError, gin.H{"msg": err.Error()}
 	}
 
 	var cursor uint64 = 0
@@ -35,7 +38,7 @@ func Key_list(redisId int, match string) (int, gin.H) {
 		val, cursor, err = rd.Scan(ctx, cursor, match, totle).Result()
 
 		if err != nil {
-			return http.StatusInternalServerError, gin.H{"msg": err}
+			return http.StatusInternalServerError, gin.H{"msg": err.Error()}
 		}
 
 		keys = append(keys, val...)

@@ -16,7 +16,7 @@ func Get_Rdis_list(redisId int) (int, gin.H) {
 	}
 
 	var list []go_redis_admin.RedisList
-	tx := db.Debug().Select("id", "desc").Where("menu_id = ?", redisId).Find(&list)
+	tx := db.Select("id", "desc").Where("menu_id = ?", redisId).Find(&list)
 
 	if tx.Error != nil {
 		return http.StatusInternalServerError, gin.H{"msg": tx.Error.Error()}

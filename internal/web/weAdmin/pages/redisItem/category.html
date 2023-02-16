@@ -34,10 +34,45 @@
 		</div>
 		<div class="weadmin-body">
 			<div class="layui-row layui-col-space1">
-				<div class="layui-col-xs3">
-					<ul class="layui-field-box" lay-filter="test" id="keyList" style="height: 600px;overflow-y:scroll;">
-						<li class="layui-nav-child">key列表</li>
-					</ul>
+				<div class="layui-col-xs3" style="border-right: #eee solid 1px;">
+					<form class="layui-form" action="">
+						<div class="layui-form-item" lay-filter="rdId">
+							<label class="layui-form-label">选择redis</label>
+							<div class="layui-input-block">
+								<select name="rdId" id="rdId" lay-verify="required" lay-filter="rdIdSelect" lay-search>
+									<option value="">请选择</option>
+								</select>
+							</div>
+						</div>
+
+						<div class="layui-form-item">
+							<label class="layui-form-label">选择库</label>
+							<div class="layui-input-block">
+								<select name="db" lay-verify="required" lay-filter="dbSelect">
+									<option value="0">0</option>
+									<option value="1">1</option>
+									<option value="2">2</option>
+									<option value="3">3</option>
+									<option value="4">4</option>
+									<option value="5">5</option>
+									<option value="6">6</option>
+									<option value="7">7</option>
+									<option value="8">8</option>
+									<option value="9">9</option>
+									<option value="10">10</option>
+									<option value="11">11</option>
+									<option value="12">12</option>
+									<option value="13">13</option>
+									<option value="14">14</option>
+									<option value="15">15</option>
+								</select>
+							</div>
+						</div>
+
+						<ul class="layui-field-box" lay-filter="test" id="keyList" style="height: 600px;overflow-y:scroll;">
+							<li class="layui-nav-child">key列表</li>
+						</ul>
+					</form>
 				</div>
 
 				<div class="layui-col-xs9" style="padding: 8px;" id="printVal">
@@ -45,7 +80,7 @@
 					<pre class="printVal" id="printString"></pre>
 					<div class="printVal" id="printMap"></div>
 					<div style="height: 600px;">
-						<form class="layui-form" action="" style="display: flex; flex-flow:column; height: 100%;">
+						<form class="layui-form" id="valInfo" action="" style="display: flex; flex-flow:column; height: 100%;">
 							<div class="layui-form-item">
 								<label class="layui-form-label" id="seyType">none</label>
 								<div class="layui-input-block">

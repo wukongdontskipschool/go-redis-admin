@@ -20,6 +20,7 @@ func Migrate() {
 
 	InitMenu(db)
 	InitRole(db)
+	InitUser(db)
 	InitRule(db)
 	InitRedisList(db)
 }
@@ -59,12 +60,6 @@ func InitMenu(db *gorm.DB) {
 		},
 		{
 			Pid:   admin.ID,
-			Name:  "权限分类",
-			Url:   "./pages/admin/cate.html",
-			State: 1,
-		},
-		{
-			Pid:   admin.ID,
 			Name:  "权限列表",
 			Rule:  "/v1/admin/rule",
 			Url:   "./pages/admin/rule.html",
@@ -74,13 +69,36 @@ func InitMenu(db *gorm.DB) {
 
 	db.Create(&menu1)
 
-	tx = db.Create(&go_redis_admin.Menu{
+	redisAd := &go_redis_admin.Menu{
 		Pid:   0,
 		Name:  "redis管理",
 		Url:   "./pages/redisList/index.html",
-		Rule:  "/v1/redisList",
+		Rule:  "",
 		State: 1,
-	})
+	}
+	tx = db.Create(redisAd)
+	if tx.Error != nil {
+		panic(tx.Error)
+	}
+
+	menu1 = []go_redis_admin.Menu{
+		{
+			Pid:   redisAd.ID,
+			Name:  "redis分类管理列表",
+			Url:   "./pages/redisList/index.html",
+			Rule:  "/v1/redisList",
+			State: 1,
+		},
+		{
+			Pid:   redisAd.ID,
+			Name:  "redis管理列表",
+			Url:   "./pages/redisList/item.html",
+			Rule:  "/v1/redisList/item",
+			State: 1,
+		},
+	}
+
+	db.Create(&menu1)
 	if tx.Error != nil {
 		panic(tx.Error)
 	}
@@ -111,7 +129,28 @@ func InitMenu(db *gorm.DB) {
 
 func InitRole(db *gorm.DB) {
 	role := &go_redis_admin.Role{
-		Name: "admin",
+		Name: "超级管理员",
+	}
+
+	stmt := &gorm.Statement{DB: db}
+	stmt.Parse(role)
+	tx := db.Exec("truncate table " + stmt.Schema.Table)
+
+	if tx.Error != nil {
+		panic(tx.Error)
+	}
+
+	tx = db.Create(role)
+	if tx.Error != nil {
+		panic(tx.Error)
+	}
+}
+
+func InitUser(db *gorm.DB) {
+	role := &go_redis_admin.User{
+		Name:   "admin",
+		Pass:   getMd5SaltPass("123456"),
+		RoleId: 1,
 	}
 
 	stmt := &gorm.Statement{DB: db}
@@ -154,9 +193,29 @@ func InitRedisList(db *gorm.DB) {
 func InitRule(db *gorm.DB) {
 	menu1 := []go_redis_admin.Rule{
 		{
+			Rule: "/v1/menu",
+			Act:  "GET",
+			Desc: "菜单列表",
+		},
+		{
 			Rule: "/v1/admin/user",
 			Act:  "GET",
 			Desc: "管理员列表",
+		},
+		{
+			Rule: "/v1/admin/user",
+			Act:  "POST",
+			Desc: "管理员新增",
+		},
+		{
+			Rule: "/v1/admin/user",
+			Act:  "PUT",
+			Desc: "管理员修改",
+		},
+		{
+			Rule: "/v1/admin/user",
+			Act:  "DELETE",
+			Desc: "管理员删除",
 		},
 		{
 			Rule: "/v1/admin/role",
@@ -164,19 +223,94 @@ func InitRule(db *gorm.DB) {
 			Desc: "角色列表",
 		},
 		{
+			Rule: "/v1/admin/role",
+			Act:  "POST",
+			Desc: "角色新增",
+		},
+		{
+			Rule: "/v1/admin/role",
+			Act:  "PUT",
+			Desc: "角色修改",
+		},
+		{
+			Rule: "/v1/admin/role",
+			Act:  "DELETE",
+			Desc: "角色删除",
+		},
+		{
 			Rule: "/v1/admin/rule",
 			Act:  "GET",
 			Desc: "权限列表",
 		},
 		{
-			Rule: "/v1/redisList",
+			Rule: "/v1/admin/rule",
+			Act:  "POST",
+			Desc: "权限新增",
+		},
+		{
+			Rule: "/v1/admin/rule",
+			Act:  "DELETE",
+			Desc: "权限删除",
+		},
+		{
+			Rule: "/v1/redisTypeList",
 			Act:  "GET",
-			Desc: "redis管理",
+			Desc: "redis分类管理列表",
+		},
+		{
+			Rule: "/v1/redisTypeList",
+			Act:  "POST",
+			Desc: "redis分类管理新增",
+		},
+		{
+			Rule: "/v1/redisTypeList",
+			Act:  "PUT",
+			Desc: "redis分类管理修改",
+		},
+		{
+			Rule: "/v1/redisTypeList",
+			Act:  "DELETE",
+			Desc: "redis分类管理删除",
+		},
+		{
+			Rule: "/v1/redisList/item",
+			Act:  "GET",
+			Desc: "redis管理列表",
+		},
+		{
+			Rule: "/v1/redisList/item",
+			Act:  "POST",
+			Desc: "redis管理新增",
+		},
+		{
+			Rule: "/v1/redisList/item",
+			Act:  "PUT",
+			Desc: "redis管理修改",
+		},
+		{
+			Rule: "/v1/redisList/item",
+			Act:  "DELETE",
+			Desc: "redis管理删除",
 		},
 		{
 			Rule: fmt.Sprintf("%s%d", "/v1/redisItem/redisList/", consts.MENU_RD_LIST_ID+1),
 			Act:  "GET",
 			Desc: "redis默认列表",
+		},
+		{
+			Rule: fmt.Sprintf("%s%d", "/v1/redisItem/redisList/", consts.MENU_RD_LIST_ID+1),
+			Act:  "POST",
+			Desc: "redis默认新增",
+		},
+		{
+			Rule: fmt.Sprintf("%s%d", "/v1/redisItem/redisList/", consts.MENU_RD_LIST_ID+1),
+			Act:  "PUT",
+			Desc: "redis默认修改",
+		},
+		{
+			Rule: fmt.Sprintf("%s%d", "/v1/redisItem/redisList/", consts.MENU_RD_LIST_ID+1),
+			Act:  "DELETE",
+			Desc: "redis默认删除",
 		},
 	}
 

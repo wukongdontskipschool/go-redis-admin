@@ -22,7 +22,7 @@ func Get_list(uId uint) (int, gin.H) {
 	var user go_redis_admin.User
 	res := db.First(&user, "ID = ?", uId)
 	if res.Error != nil {
-		return http.StatusInternalServerError, gin.H{"status": 1, "msg": err.Error()}
+		return http.StatusInternalServerError, gin.H{"status": 1, "msg": res.Error.Error()}
 	}
 
 	if res.RowsAffected < 1 {

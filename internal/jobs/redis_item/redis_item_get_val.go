@@ -10,15 +10,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Get_val(redisId int, key string) (int, gin.H) {
+func Get_val(typeId int, redisId int, rdDb int, key string) (int, gin.H) {
 	conf, err := jobs.Get_redis_connect_conf_from_db(redisId)
 	if err != nil {
 		return http.StatusInternalServerError, gin.H{"msg": fmt.Sprintf("%s", err)}
 	}
 
-	rd := redisPool.Get_redis(conf)
+	if conf.RdType != typeId {
+		return http.StatusForbidden, gin.H{"msg": "参数错误"}
+	}
 
 	var ctx = context.Background()
+	rd := redisPool.Get_redis(conf, rdDb)
+	defer rd.Close()
 
 	key_type, err := rd.Type(ctx, key).Result()
 	if err != nil {

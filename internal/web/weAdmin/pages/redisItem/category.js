@@ -5,6 +5,9 @@ var admin
 var treeGird
 var table
 var form
+var rdType
+var rdId
+var rdDb = '0'
 
 function del(nodeId) {
 	alert(nodeId)
@@ -24,31 +27,44 @@ layui.use(['treeGird', 'jquery', 'admin', 'layer', 'table', 'form', 'jsonview'],
 	table = layui.table;
 	form = layui.form;
 
-	console.log(window.location)
-	console.log(layui.router(window.location.href))
-	var url = new URL(window.location.href);
-	console.log(url.searchParams.get("type"));
+	// redis type
+	rdType = (new URL(window.location.href)).searchParams.getAll('typeId');
+	// redis id
+	rdId = form.val("rdId");
 	
-	var rdId = 1
-	$.ajax({
-		type: "GET",
-		url: "/v1/redisItem/keys/" + rdId,
-		data: "",
-		success: function(res) {
-			console.log(res)
-			success(res);
-		},
-		error: function(e, msg, codeMsg) {
-			console.log(e, msg, codeMsg)
-		}
-	});
+	function getRedisList() {
+		admin.ajax({
+			type: "GET",
+			url: "/v1/redisItem/redisList/" + rdType,
+			data: "",
+			success: function(res) {
+				$('#rdId').html('');
+				let li = '<option value="">请选择</option>';
+				$('#rdId').append(li);
+				for (var i in res['data']) {
+					li = '<option value="' + res['data'][i]['ID'] + '">' + res['data'][i]['Desc'] + '</option>';
+					$('#rdId').append(li);
+				}
+				console.log(res)
+				form.render('select', 'rdId');
+			}
+		});
+	}
 
-	function success(res) {
-		$('#keyList').html('')
-		for (var i in res['l']) {
-			let li = '<li class="" onclick="getVal(this, ' + rdId + ');" title="' + res['l'][i] + '" style="word-wrap:break-word">' + res['l'][i] + '</li>'
-			$('#keyList').append(li)
-		}
+	function getKeys() {
+		$('#keyList').html('');
+		resetFrom();
+		admin.ajax({
+			type: "GET",
+			url: "/v1/redisType/" + rdType + "/redisItem/" + rdId + "/keys?db=" + rdDb,
+			data: "",
+			success: function(res) {
+				for (var i in res['l']) {
+					let li = '<li class="" onclick="getVal(this, ' + rdId + ');" title="' + res['l'][i] + '" style="word-wrap:break-word">' + res['l'][i] + '</li>'
+					$('#keyList').append(li)
+				}
+			}
+		});
 	}
 
 	//触发行单击事件
@@ -95,14 +111,27 @@ layui.use(['treeGird', 'jquery', 'admin', 'layer', 'table', 'form', 'jsonview'],
 			// a = PHPSerialize.serialize(JSON.parse(com))
 		}
 	}); 
+
+	form.on('select(rdIdSelect)', function(data) {
+		rdId = data.value
+		getKeys()
+	})
+
+	form.on('select(dbSelect)', function(data) {
+		rdDb = data.value
+		getKeys()
+	})
+
+	getRedisList();
 });
 
 function resetFrom()
 {
-	$('#seyType').text('')
-	$('#items + div').hide()
-	$('#subKey').val('')
-	$('#content').text('')
+	$('#valInfo')[0].reset();
+	$('#seyType').text('');
+	$('#items + div').hide();
+	$('#subKey').val('');
+	$('#content').text('');
 }
 
 function getVal(elem, rdId)
@@ -111,16 +140,13 @@ function getVal(elem, rdId)
 	resetFrom();
 	$('#key').val(keyy)
 
-	$.ajax({
+	admin.ajax({
 		type: "GET",
-		url: "/v1/redisItem/getVal/" + rdId + "/" + keyy,
+		url: "/v1/redisType/" + rdType + "/redisItem/" + rdId + "/val?key=" + keyy + "&db=" + rdDb,
 		data: "",
 		success: function(res) {
 			console.log(res)
 			printVal(res)
-		},
-		error: function(e, msg, codeMsg) {
-			console.log(e, msg, codeMsg)
 		}
 	});
 }

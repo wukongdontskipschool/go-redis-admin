@@ -25,47 +25,15 @@
 					<span class="we-red">*</span>角色名
 				</label>
 				<div class="layui-input-inline">
-					<input type="text" id="name" name="name" required="" lay-verify="name" autocomplete="off"
-						class="layui-input">
+					<input type="text" id="name" name="name" required lay-verify="name" autocomplete="off" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item layui-form-text">
-					<label class="layui-form-label">拥有权限</label>
-					<table class="layui-table layui-input-block">
-						<tbody>
-							<tr>
-								<td>
-									用户管理
-									<input name="id[]" type="checkbox" value="2">
-								</td>
-								<td>
-									<div class="layui-input-block">
-										<input name="id[]" type="checkbox" value="2"> 用户停用
-										<input name="id[]" type="checkbox" value="2"> 用户删除
-										<input name="id[]" type="checkbox" value="2"> 用户修改
-										<input name="id[]" type="checkbox" value="2"> 用户改密
-										<input name="id[]" type="checkbox" value="2"> 用户列表
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									文章管理
-									<input name="id[]" type="checkbox" value="2">
-								</td>
-								<td>
-									<div class="layui-input-block">
-										<input name="id[]" type="checkbox" value="2"> 文章添加
-										<input name="id[]" type="checkbox" value="2"> 文章删除
-										<input name="id[]" type="checkbox" value="2"> 文章修改
-										<input name="id[]" type="checkbox" value="2"> 文章改密
-										<input name="id[]" type="checkbox" value="2"> 文章列表
-									</div>
-								</td>
-							</tr>
-						</tbody>
-					</table>
+				<label class="layui-form-label">权限</label>
+				<div class="layui-input-inline" id="rule">
+					<!-- <input name="id[]" type="checkbox" value="2" title="用户列表"> -->
 				</div>
+			</div>
 			<!-- <div class="layui-form-item layui-form-text">
 					<label for="desc" class="layui-form-label">
  						描述
@@ -75,12 +43,16 @@
 					</div>
 				</div> -->
 			<div class="layui-form-item">
-				<button class="layui-btn" lay-submit="" lay-filter="add">增加</button>
+				<button class="layui-btn" lay-submit="" lay-filter="add">修改</button>
 			</div>
+
+			<input type="hidden" id="rId" name="rId">
 		</form>
 	</div>
 	<script src="../../lib/layui/layui.js" charset="utf-8"></script>
 	<script type="text/javascript">
+		var rId;
+
 		layui.extend({
 			admin: '{/}../../static/js/admin'
 		});
@@ -107,13 +79,40 @@
 				return false;
 			});
 
+			function getRule() {
+				admin.ajax({
+					type: "GET",
+					url: "/v1/admin/role/" + rId + "/rule",
+					data: "",
+					success: function (res) {
+						console.log(res)
+						drawRule(res.data, res.name, res.okRules)
+					},
+					error: function (e, msg, codeMsg) {
+						console.log(e, msg, codeMsg)
+					}
+				});
+			}
+
+			function drawRule(data, name, okRules) {
+				$('#rule').html('');
+				for (let i in data) {
+					let okrl = data[i]['Act'] + '_' + data[i]['Rule'];
+					isCheck = okRules.indexOf(okrl) != -1 ? 'checked' : '';
+					let ip = '<input name="ruleIds[]" type="checkbox" value="' + data[i]['ID'] + '" title="' + data[i]['Desc'] + '" ' + isCheck + '>';
+					$('#rule').append(ip);
+				}
+
+				$('#name').val(name);
+				form.render('checkbox')
+			}
+
 			function addUser(data) {
-				$.ajax({
-					type: "POST",
+				admin.ajax({
+					type: "PUT",
 					url: "/v1/admin/role",
 					data: data,
 					success: function (res) {
-						console.log(res)
 						success(res);
 					},
 					error: function (e, msg, codeMsg) {
@@ -123,13 +122,19 @@
 			}
 
 			function success(res) {
-				layer.alert("增加成功", { icon: 6 }, function () {
+				layer.alert("修改成功", { icon: 6 }, function () {
 					// 获得frame索引
 					var index = parent.layer.getFrameIndex(window.name);
 					//关闭当前frame
 					parent.layer.close(index);
+					parent.window.reloadTable()
 				});
 			}
+
+			rId = (new URL(window.location.href)).searchParams.getAll('rId');
+			$('#rId').val(rId);
+
+			getRule();
 		});
 	</script>
 </body>
