@@ -22,27 +22,27 @@ type ConnectConf struct {
 var lock sync.Mutex
 
 // map[路径]map[库标志]connectConf
-var all_configs map[string]map[string]ConnectConf
+var allConfigs map[string]map[string]ConnectConf
 
 func init() {
-	all_configs = map[string]map[string]ConnectConf{}
+	allConfigs = map[string]map[string]ConnectConf{}
 }
 
-func Get_db(path string, name string) (db *gorm.DB, err error) {
+func GetDb(path string, name string) (db *gorm.DB, err error) {
 	lock.Lock()
 	defer lock.Unlock()
 
 	var confMap map[string]ConnectConf
 	var has bool
-	confMap, has = all_configs[path]
+	confMap, has = allConfigs[path]
 	if !has {
-		err = configs.Get_config(path, &confMap)
+		err = configs.GetConfig(path, &confMap)
 
 		if err != nil {
 			return nil, errors.New("config path error:" + path)
 		}
 
-		all_configs[path] = confMap
+		allConfigs[path] = confMap
 	}
 
 	conf, has := confMap[name]

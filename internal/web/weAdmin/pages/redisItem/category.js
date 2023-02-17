@@ -45,7 +45,7 @@ layui.use(['treeGird', 'jquery', 'admin', 'layer', 'table', 'form', 'jsonview'],
 					li = '<option value="' + res['data'][i]['ID'] + '">' + res['data'][i]['Desc'] + '</option>';
 					$('#rdId').append(li);
 				}
-				console.log(res)
+
 				form.render('select', 'rdId');
 			}
 		});
@@ -70,7 +70,7 @@ layui.use(['treeGird', 'jquery', 'admin', 'layer', 'table', 'form', 'jsonview'],
 	//触发行单击事件
 	table.on('row(items)', function(obj){
 		// console.log(obj.tr) //得到当前行元素对象
-		console.log(obj.data) //得到当前行数据
+		// console.log(obj.data) //得到当前行数据
 		//obj.del(); //删除当前行
 		//obj.update(fields) //修改当前行数据
 		$('#content').text(obj.data.val)
@@ -79,14 +79,13 @@ layui.use(['treeGird', 'jquery', 'admin', 'layer', 'table', 'form', 'jsonview'],
 
 	form.on('select(showText)', function(data){
 		// console.log(data.elem); //得到select原始DOM对象
-		console.log(data.value); //得到被选中的值
+		// console.log(data.value); //得到被选中的值
 		// console.log(data.othis); //得到美化后的DOM对象
 
 		if (data.value == 'php-unserialize') {
 			let com = $('#content').text()
 			try {
 				com = PHPUnserialize.unserialize(com);
-				console.log(com)
 				$('#content').text(JSON.stringify(com))
 			} catch (error) {
 				console.log(error)
@@ -98,7 +97,7 @@ layui.use(['treeGird', 'jquery', 'admin', 'layer', 'table', 'form', 'jsonview'],
 			com = {a: 'a', b: 'b'}
 			try {
 				com = PHPSerialize.serialize(com);
-				console.log(com)
+				// console.log(com)
 				// $('#content').text(JSON.stringify(com))
 			} catch (error) {
 				console.log(error)
@@ -145,7 +144,6 @@ function getVal(elem, rdId)
 		url: "/v1/redisType/" + rdType + "/redisItem/" + rdId + "/val?key=" + keyy + "&db=" + rdDb,
 		data: "",
 		success: function(res) {
-			console.log(res)
 			printVal(res)
 		}
 	});
@@ -154,11 +152,11 @@ function getVal(elem, rdId)
 function printVal(res)
 {
 	$('.printVal').html('')
-	$('#seyType').text(res.key_type)
-	
-	if (res.key_type == 'string') {
+	$('#seyType').text(res.keyType)
+
+	if (res.keyType == 'string') {
 		$('#content').text(res.data)
-	} else if (res.key_type == 'list') {
+	} else if (res.keyType == 'list') {
 		let cols = [[ //表头
 		  {field: 'id', title: 'index', width:80, fixed: 'left'}
 		  ,{field: 'val', title: 'val'}
@@ -171,7 +169,7 @@ function printVal(res)
 			data[data.length] = tmep
 		}
 		printItem(data, cols)
-	} else if (res.key_type == 'set') {
+	} else if (res.keyType == 'set') {
 		let cols = [[ //表头
 		  {field: 'id', title: '序号', width:80, fixed: 'left'}
 		  ,{field: 'val', title: 'val'}
@@ -185,7 +183,7 @@ function printVal(res)
 			data[data.length] = tmep
 		}
 		printItem(data, cols)
-	} else if (res.key_type == 'zset') {
+	} else if (res.keyType == 'zset') {
 		let cols = [[ //表头
 		  {field: 'id', title: 'index', width:80, fixed: 'left'}
 		  ,{field: 'subKey', title: 'member'}
@@ -198,7 +196,7 @@ function printVal(res)
 			data[data.length] = tmep
 		}
 		printItem(data, cols)
-	} else if (res.key_type == 'hash') {
+	} else if (res.keyType == 'hash') {
 		let data = []
 		let id = 0
 		for (var k in res.data) {

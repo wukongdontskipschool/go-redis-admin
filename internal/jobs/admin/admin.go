@@ -17,7 +17,7 @@ func getMd5SaltPass(pass string) string {
 func getPassSalt() (salt string) {
 	var confMap map[string]string
 
-	err := configs.Get_config(consts.ENV_CONF, &confMap)
+	err := configs.GetConfig(consts.ENV_CONF, &confMap)
 	if err != nil {
 		return
 	}

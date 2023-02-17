@@ -9,20 +9,20 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var all_configs map[string][]byte
+var allConfigs map[string][]byte
 var m sync.RWMutex
 
 func init() {
-	all_configs = map[string][]byte{}
+	allConfigs = map[string][]byte{}
 }
 
-func Get_config(name string, out interface{}) error {
+func GetConfig(name string, out interface{}) error {
 	m.Lock()
 	defer m.Unlock()
 
 	var err error
 
-	bytes, has := all_configs[name]
+	bytes, has := allConfigs[name]
 	if !has {
 		bytes, err = ioutil.ReadFile(fmt.Sprintf("internal/configs/%s.yaml", name))
 
@@ -30,7 +30,7 @@ func Get_config(name string, out interface{}) error {
 			return err
 		}
 
-		all_configs[name] = bytes
+		allConfigs[name] = bytes
 	}
 
 	err = yaml.Unmarshal(bytes, out)
@@ -41,7 +41,7 @@ func Get_config(name string, out interface{}) error {
 func GetEnvVal(key string) (val string) {
 	var confMap map[string]string
 
-	err := Get_config(consts.ENV_CONF, &confMap)
+	err := GetConfig(consts.ENV_CONF, &confMap)
 	if err != nil {
 		return
 	}

@@ -2,8 +2,8 @@ package router
 
 import (
 	"net/http"
-	base_api "redisadmin/internal/api/v1"
-	"redisadmin/internal/api/v1/redis_admin"
+	baseApi "redisadmin/internal/api/v1"
+	"redisadmin/internal/api/v1/redisAdmin"
 	"redisadmin/internal/consts"
 	"redisadmin/internal/services/auth"
 
@@ -33,48 +33,48 @@ func SetupRouter() *gin.Engine {
 	r.StaticFS("/pages", http.Dir("./internal/web/weAdmin/pages"))
 	r.StaticFS("/lib/layui", http.Dir("./internal/web/weAdmin/lib/layui"))
 
-	r.GET("/index", base_api.Deal_request(redis_admin.Api_redis_list.Web_index))
-	r.GET("/index.html", base_api.Deal_request(redis_admin.Api_redis_list.Web_index))
-	r.GET("/login.html", base_api.Deal_request(redis_admin.Api_redis_list.Web_login))
-	r.PUT("/login", base_api.Deal_request(redis_admin.Api_admin.Login))
-	r.GET("/admin/migrate", base_api.Deal_request(redis_admin.Api_admin.Migrate))
+	r.GET("/index", baseApi.DealRequest(redisAdmin.ApiRedisList.WebIndex))
+	r.GET("/index.html", baseApi.DealRequest(redisAdmin.ApiRedisList.WebIndex))
+	r.GET("/login.html", baseApi.DealRequest(redisAdmin.ApiRedisList.WebLogin))
+	r.PUT("/login", baseApi.DealRequest(redisAdmin.ApiAdmin.Login))
+	r.GET("/admin/migrate", baseApi.DealRequest(redisAdmin.ApiAdmin.Migrate))
 
 	v1 := r.Group("/v1")
 	v1.Use(Auth)
 	{
-		v1.GET("/menu", base_api.AuthRule(base_api.GetBaseRule), base_api.Deal_request(redis_admin.Api_menu_list.Index))
+		v1.GET("/menu", baseApi.AuthRule(baseApi.GetBaseRule), baseApi.DealRequest(redisAdmin.ApiMenuList.Index))
 
-		v1.GET("/admin/user", base_api.AuthRule(base_api.GetBaseRule), base_api.Deal_request(redis_admin.Api_admin.Index))
-		v1.POST("/admin/user", base_api.AuthRule(base_api.GetBaseRule), base_api.Deal_request(redis_admin.Api_admin.Store))
-		v1.PUT("/admin/user", base_api.AuthRule(base_api.GetBaseRule), base_api.Deal_request(redis_admin.Api_admin.Update))
-		v1.DELETE("/admin/user/:uId", base_api.AuthRule(redis_admin.Api_admin.GetUserAuthRule), base_api.Deal_request(redis_admin.Api_admin.Detele))
-		v1.GET("/admin/user/:uId", base_api.AuthRule(redis_admin.Api_admin.GetUserAuthRule), base_api.Deal_request(redis_admin.Api_admin.UserInfo))
+		v1.GET("/admin/user", baseApi.AuthRule(baseApi.GetBaseRule), baseApi.DealRequest(redisAdmin.ApiAdmin.Index))
+		v1.POST("/admin/user", baseApi.AuthRule(baseApi.GetBaseRule), baseApi.DealRequest(redisAdmin.ApiAdmin.Store))
+		v1.PUT("/admin/user", baseApi.AuthRule(baseApi.GetBaseRule), baseApi.DealRequest(redisAdmin.ApiAdmin.Update))
+		v1.DELETE("/admin/user/:uId", baseApi.AuthRule(redisAdmin.ApiAdmin.GetUserAuthRule), baseApi.DealRequest(redisAdmin.ApiAdmin.Detele))
+		v1.GET("/admin/user/:uId", baseApi.AuthRule(redisAdmin.ApiAdmin.GetUserAuthRule), baseApi.DealRequest(redisAdmin.ApiAdmin.UserInfo))
 
-		v1.GET("/admin/role", base_api.AuthRule(base_api.GetBaseRule), base_api.Deal_request(redis_admin.Api_admin.RoleIndex))
-		v1.POST("/admin/role", base_api.AuthRule(base_api.GetBaseRule), base_api.Deal_request(redis_admin.Api_admin.RoleStore))
-		v1.PUT("/admin/role", base_api.AuthRule(base_api.GetBaseRule), base_api.Deal_request(redis_admin.Api_admin.RoleUpdate))
-		v1.DELETE("/admin/role/:rId", base_api.AuthRule(redis_admin.Api_admin.GetRoleAuthRule), base_api.Deal_request(redis_admin.Api_admin.RoleDelete))
-		v1.GET("/admin/role/:rId/rule", base_api.AuthRule(redis_admin.Api_admin.GetRoleAuthRule), base_api.Deal_request(redis_admin.Api_admin.RoleRule))
+		v1.GET("/admin/role", baseApi.AuthRule(baseApi.GetBaseRule), baseApi.DealRequest(redisAdmin.ApiAdmin.RoleIndex))
+		v1.POST("/admin/role", baseApi.AuthRule(baseApi.GetBaseRule), baseApi.DealRequest(redisAdmin.ApiAdmin.RoleStore))
+		v1.PUT("/admin/role", baseApi.AuthRule(baseApi.GetBaseRule), baseApi.DealRequest(redisAdmin.ApiAdmin.RoleUpdate))
+		v1.DELETE("/admin/role/:rId", baseApi.AuthRule(redisAdmin.ApiAdmin.GetRoleAuthRule), baseApi.DealRequest(redisAdmin.ApiAdmin.RoleDelete))
+		v1.GET("/admin/role/:rId/rule", baseApi.AuthRule(redisAdmin.ApiAdmin.GetRoleAuthRule), baseApi.DealRequest(redisAdmin.ApiAdmin.RoleRule))
 
-		v1.GET("/admin/rule", base_api.AuthRule(base_api.GetBaseRule), base_api.Deal_request(redis_admin.Api_admin.RuleIndex))
-		v1.POST("/admin/rule", base_api.AuthRule(base_api.GetBaseRule), base_api.Deal_request(redis_admin.Api_admin.RuleStore))
-		v1.DELETE("/admin/rule", base_api.AuthRule(base_api.GetBaseRule), base_api.Deal_request(redis_admin.Api_admin.RuleDelete))
+		v1.GET("/admin/rule", baseApi.AuthRule(baseApi.GetBaseRule), baseApi.DealRequest(redisAdmin.ApiAdmin.RuleIndex))
+		v1.POST("/admin/rule", baseApi.AuthRule(baseApi.GetBaseRule), baseApi.DealRequest(redisAdmin.ApiAdmin.RuleStore))
+		v1.DELETE("/admin/rule", baseApi.AuthRule(baseApi.GetBaseRule), baseApi.DealRequest(redisAdmin.ApiAdmin.RuleDelete))
 
-		v1.GET("/redisTypeList", base_api.AuthRule(base_api.GetBaseRule), base_api.Deal_request(redis_admin.Api_redis_list.TypeList))
-		v1.POST("/redisTypeList", base_api.AuthRule(base_api.GetBaseRule), base_api.Deal_request(redis_admin.Api_redis_list.TypeStore))
-		v1.PUT("/redisTypeList", base_api.AuthRule(base_api.GetBaseRule), base_api.Deal_request(redis_admin.Api_redis_list.TypeUpdate))
-		v1.DELETE("/redisTypeList", base_api.AuthRule(base_api.GetBaseRule), base_api.Deal_request(redis_admin.Api_redis_list.TypeDelete))
+		v1.GET("/redisTypeList", baseApi.AuthRule(baseApi.GetBaseRule), baseApi.DealRequest(redisAdmin.ApiRedisList.TypeList))
+		v1.POST("/redisTypeList", baseApi.AuthRule(baseApi.GetBaseRule), baseApi.DealRequest(redisAdmin.ApiRedisList.TypeStore))
+		v1.PUT("/redisTypeList", baseApi.AuthRule(baseApi.GetBaseRule), baseApi.DealRequest(redisAdmin.ApiRedisList.TypeUpdate))
+		v1.DELETE("/redisTypeList", baseApi.AuthRule(baseApi.GetBaseRule), baseApi.DealRequest(redisAdmin.ApiRedisList.TypeDelete))
 
-		v1.GET("/redisList/item", base_api.AuthRule(base_api.GetBaseRule), base_api.Deal_request(redis_admin.Api_redis_list.ItemList))
-		v1.POST("/redisList/item", base_api.AuthRule(base_api.GetBaseRule), base_api.Deal_request(redis_admin.Api_redis_list.ItemStore))
-		v1.PUT("/redisList/item", base_api.AuthRule(base_api.GetBaseRule), base_api.Deal_request(redis_admin.Api_redis_list.ItemUpdate))
-		v1.DELETE("/redisList/item", base_api.AuthRule(base_api.GetBaseRule), base_api.Deal_request(redis_admin.Api_redis_list.ItemDelete))
-		v1.GET("/redisList/itemInfo", base_api.AuthRule(redis_admin.Api_redis_list.GetAuthRule), base_api.Deal_request(redis_admin.Api_redis_list.ItemInfo))
+		v1.GET("/redisList/item", baseApi.AuthRule(baseApi.GetBaseRule), baseApi.DealRequest(redisAdmin.ApiRedisList.ItemList))
+		v1.POST("/redisList/item", baseApi.AuthRule(baseApi.GetBaseRule), baseApi.DealRequest(redisAdmin.ApiRedisList.ItemStore))
+		v1.PUT("/redisList/item", baseApi.AuthRule(baseApi.GetBaseRule), baseApi.DealRequest(redisAdmin.ApiRedisList.ItemUpdate))
+		v1.DELETE("/redisList/item", baseApi.AuthRule(baseApi.GetBaseRule), baseApi.DealRequest(redisAdmin.ApiRedisList.ItemDelete))
+		v1.GET("/redisList/itemInfo", baseApi.AuthRule(redisAdmin.ApiRedisList.GetAuthRule), baseApi.DealRequest(redisAdmin.ApiRedisList.ItemInfo))
 
-		v1.GET("/redisItem/indexHtml/:typeId", base_api.AuthRule(redis_admin.Api_redis_item.GetAuthRule), base_api.Deal_request(redis_admin.Api_redis_item.IndexHtml))
-		v1.GET("/redisItem/redisList/:typeId", base_api.AuthRule(redis_admin.Api_redis_item.GetAuthRule), base_api.Deal_request(redis_admin.Api_redis_item.Get_Rdis_list))
-		v1.GET("/redisType/:typeId/redisItem/:rdId/keys", base_api.AuthRule(redis_admin.Api_redis_item.GetAuthRule), base_api.Deal_request(redis_admin.Api_redis_item.Keys))
-		v1.GET("/redisType/:typeId/redisItem/:rdId/val", base_api.AuthRule(redis_admin.Api_redis_item.GetAuthRule), base_api.Deal_request(redis_admin.Api_redis_item.Get_val))
+		v1.GET("/redisItem/indexHtml/:typeId", baseApi.AuthRule(redisAdmin.ApiRedisItem.GetAuthRule), baseApi.DealRequest(redisAdmin.ApiRedisItem.IndexHtml))
+		v1.GET("/redisItem/redisList/:typeId", baseApi.AuthRule(redisAdmin.ApiRedisItem.GetAuthRule), baseApi.DealRequest(redisAdmin.ApiRedisItem.GetRdisList))
+		v1.GET("/redisType/:typeId/redisItem/:rdId/keys", baseApi.AuthRule(redisAdmin.ApiRedisItem.GetAuthRule), baseApi.DealRequest(redisAdmin.ApiRedisItem.Keys))
+		v1.GET("/redisType/:typeId/redisItem/:rdId/val", baseApi.AuthRule(redisAdmin.ApiRedisItem.GetAuthRule), baseApi.DealRequest(redisAdmin.ApiRedisItem.GetVal))
 	}
 
 	return r

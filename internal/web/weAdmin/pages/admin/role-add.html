@@ -71,7 +71,6 @@
 
 			//监听提交
 			form.on('submit(add)', function (data) {
-				console.log(data);
 				addUser(data.field)
 				return false;
 			});
@@ -82,11 +81,7 @@
 					url: "/v1/admin/rule",
 					data: "",
 					success: function (res) {
-						console.log(res)
 						drawRule(res.data)
-					},
-					error: function (e, msg, codeMsg) {
-						console.log(e, msg, codeMsg)
 					}
 				});
 			}
@@ -107,9 +102,6 @@
 					data: data,
 					success: function (res) {
 						success(res);
-					},
-					error: function (e, msg, codeMsg) {
-						console.log(e, msg, codeMsg)
 					}
 				});
 			}

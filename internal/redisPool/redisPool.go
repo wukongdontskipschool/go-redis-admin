@@ -18,17 +18,17 @@ type ConnectConf struct {
 }
 
 var lock sync.Mutex
-var all_pool map[string]*redis.Client
+var allPool map[string]*redis.Client
 
 func init() {
-	all_pool = map[string]*redis.Client{}
+	allPool = map[string]*redis.Client{}
 }
 
-func Get_redis(conf *ConnectConf, db int) *redis.Client {
+func GetRedis(conf *ConnectConf, db int) *redis.Client {
 	lock.Lock()
 	defer lock.Unlock()
 
-	var rd_pool *redis.Client
+	var rdPool *redis.Client
 	// var has bool
 
 	addr := fmt.Sprintf("%s:%s", conf.Host, conf.Port)
@@ -44,17 +44,17 @@ func Get_redis(conf *ConnectConf, db int) *redis.Client {
 		}
 	}
 
-	// rd_pool, has = all_pool[key]
+	// rdPool, has = allPool[key]
 	// if !has {
-	rd_pool = redis.NewClient(&redis.Options{
+	rdPool = redis.NewClient(&redis.Options{
 		Addr:     addr,
 		Password: auth,
 		DB:       db,
 		PoolSize: 1,
 	})
 
-	all_pool[key] = rd_pool
+	allPool[key] = rdPool
 	// }
 
-	return rd_pool
+	return rdPool
 }

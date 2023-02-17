@@ -16,7 +16,7 @@ var Enforcer *casbin.SyncedEnforcer
 
 func init() {
 	var confMap map[string]databases.ConnectConf
-	err := configs.Get_config(consts.DB_RD_AD_CONF, &confMap)
+	err := configs.GetConfig(consts.DB_RD_AD_CONF, &confMap)
 	if err != nil {
 		panic("数据库报错")
 	}
