@@ -77,10 +77,9 @@
 
 				<div class="layui-col-xs9" style="padding: 8px;" id="printVal">
 					
-					<pre class="printVal" id="printString"></pre>
-					<div class="printVal" id="printMap"></div>
 					<div style="height: 600px;">
 						<form class="layui-form" id="valInfo" action="" style="display: flex; flex-flow:column; height: 100%;">
+							<!-- key -->
 							<div class="layui-form-item">
 								<label class="layui-form-label" id="seyType">none</label>
 								<div class="layui-input-block">
@@ -88,6 +87,7 @@
 								</div>
 							</div>
 
+							<!-- 子项 -->
 							<div>
 								<div class="layui-form-item">
 									<table id="items" lay-filter="items"></table>
@@ -95,21 +95,24 @@
 							</div>
 
 							<div class="layui-form-item">
-								<input type="text" id="subKey" style="width: 25%;" required lay-verify="required" placeholder="" autocomplete="off" class="layui-input floatLeft">
+								<!-- 子key -->
+								<input type="text" id="subKey" style="width: 25%; display: none;" required lay-verify="required" placeholder="" autocomplete="off" class="layui-input floatLeft">
 
+								<!-- 文本格式 -->
 								<div class="layui-input-block floatRight" style="width: 25%; margin-left: 5px;">
 									<select name="showText" lay-verify="required" lay-filter="showText">
 										<option value="text">text</option>
 										<option value="php-unserialize">php-unserialize</option>
-										<option value="json">json</option>
+										<!-- <option value="json">json</option> -->
 									</select>
 								</div>
-								<label class="layui-form-label floatRight">文本格式</label>
+								<label class="layui-form-label floatRight">原值格式</label>
 							</div>
 
+							<!-- 内容 -->
 							<div class="layui-form-item" style="flex: 1; margin-bottom:0; border: 1px solid #eee; border-radius: 2px;">
-								<pre id="content" contentEditable="true" style="padding: 5px; height: calc(100% - 10px); max-height: 300px; overflow: auto;"></pre>
-								<div id="json" contentEditable="true"></div>
+								<pre id="content" contentEditable="true" style="padding: 5px; height: calc(100% - 10px); overflow: auto;"></pre>
+								<!-- <div id="json" contentEditable="true"></div> -->
 							</div>
 
 						</form>

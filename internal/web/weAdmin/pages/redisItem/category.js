@@ -8,6 +8,7 @@ var form
 var rdType
 var rdId
 var rdDb = '0'
+var selectValue; // 当前选择内容
 
 function del(nodeId) {
 	alert(nodeId)
@@ -71,21 +72,24 @@ layui.use(['treeGird', 'jquery', 'admin', 'layer', 'table', 'form', 'jsonview'],
 	table.on('row(items)', function(obj){
 		// console.log(obj.tr) //得到当前行元素对象
 		// console.log(obj.data) //得到当前行数据
-		//obj.del(); //删除当前行
-		//obj.update(fields) //修改当前行数据
+		// obj.del(); //删除当前行
+		// obj.update(fields) //修改当前行数据
+		selectValue = obj.data.val;
 		$('#content').text(obj.data.val)
 		$('#subKey').val(obj.data.subKey)
 	});
 
+	// 切换显示格式
 	form.on('select(showText)', function(data){
 		// console.log(data.elem); //得到select原始DOM对象
 		// console.log(data.value); //得到被选中的值
 		// console.log(data.othis); //得到美化后的DOM对象
 
 		if (data.value == 'php-unserialize') {
-			let com = $('#content').text()
+			let com = selectValue;
 			try {
 				com = PHPUnserialize.unserialize(com);
+				// PHPSerialize.serialize(com);
 				$('#content').text(JSON.stringify(com))
 			} catch (error) {
 				console.log(error)
@@ -93,29 +97,23 @@ layui.use(['treeGird', 'jquery', 'admin', 'layer', 'table', 'form', 'jsonview'],
 		}
 
 		if (data.value == 'text') {
-			let com = $('#content').text()
-			com = {a: 'a', b: 'b'}
-			try {
-				com = PHPSerialize.serialize(com);
-				// console.log(com)
-				// $('#content').text(JSON.stringify(com))
-			} catch (error) {
-				console.log(error)
-			}
+			$('#content').text(selectValue);
 		}
 
 		if (data.value == 'json') {
-			let com = $('#content').text()
+			let com = selectValue;
 			$("#json").JSONView(JSON.parse(com));
 			// a = PHPSerialize.serialize(JSON.parse(com))
 		}
 	}); 
 
+	// 切换redis
 	form.on('select(rdIdSelect)', function(data) {
 		rdId = data.value
 		getKeys()
 	})
 
+	// 切换库
 	form.on('select(dbSelect)', function(data) {
 		rdDb = data.value
 		getKeys()
@@ -127,16 +125,20 @@ layui.use(['treeGird', 'jquery', 'admin', 'layer', 'table', 'form', 'jsonview'],
 function resetFrom()
 {
 	$('#valInfo')[0].reset();
-	$('#seyType').text('');
+	$('#seyType').text(''); // key 类型
+	$('#items + div').html(''); // 子项列表
 	$('#items + div').hide();
-	$('#subKey').val('');
+	$('#subKey').val(''); // 子key
+	$('#subKey').hide();
 	$('#content').text('');
+	selectValue = ""; // 选中内容置空
 }
 
 function getVal(elem, rdId)
 {
 	var keyy = $(elem).text()
 	resetFrom();
+
 	$('#key').val(keyy)
 
 	admin.ajax({
@@ -151,11 +153,11 @@ function getVal(elem, rdId)
 
 function printVal(res)
 {
-	$('.printVal').html('')
 	$('#seyType').text(res.keyType)
 
 	if (res.keyType == 'string') {
-		$('#content').text(res.data)
+		selectValue = res.data;
+		$('#content').text(res.data);
 	} else if (res.keyType == 'list') {
 		let cols = [[ //表头
 		  {field: 'id', title: 'index', width:80, fixed: 'left'}
@@ -195,6 +197,7 @@ function printVal(res)
 			let tmep = {'id': k, 'subKey': res.data[k]['Member'], 'val': res.data[k]['Score']}
 			data[data.length] = tmep
 		}
+		$('#subKey').show();
 		printItem(data, cols)
 	} else if (res.keyType == 'hash') {
 		let data = []
@@ -204,6 +207,7 @@ function printVal(res)
 			let tmep = {'id': id, 'subKey': k, 'val': res.data[k]}
 			data[data.length] = tmep
 		}
+		$('#subKey').show();
 		printItem(data)
 	}
 }
@@ -216,7 +220,8 @@ function printItem(data, cols)
 		{field: 'val', title: 'val'}
 	]]
 
-	$('#items + div').show()
+	// 子项列表框显示
+	$('#items + div').show(); 
 
 	table.render({
 		elem: '#items'
