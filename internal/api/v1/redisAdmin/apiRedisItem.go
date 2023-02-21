@@ -1,8 +1,6 @@
 package redisAdmin
 
 import (
-	"log"
-	"net/http"
 	baseApi "redisadmin/internal/api/v1"
 	"redisadmin/internal/jobs/redisItem"
 	"strconv"
@@ -53,11 +51,4 @@ func (r *apiRedisItem) GetRdisList(ctx *gin.Context) (int, gin.H, string) {
 
 	state, hash := redisItem.GetRdisList(confId)
 	return state, hash, ""
-}
-
-func (r *apiRedisItem) IndexHtml(ctx *gin.Context) (int, gin.H, string) {
-	rdType := ctx.Param("typeId")
-	// confId, _ := strconv.Atoi(rdType)
-	log.Println(rdType)
-	return http.StatusOK, gin.H{}, "category.html"
 }

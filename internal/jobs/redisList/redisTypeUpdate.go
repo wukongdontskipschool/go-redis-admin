@@ -2,7 +2,6 @@ package redisList
 
 import (
 	"database/sql"
-	"log"
 	"net/http"
 	"redisadmin/internal/consts"
 	"redisadmin/internal/databases"
@@ -41,7 +40,7 @@ func TypeUpdate(id string, name string) (int, gin.H) {
 		// 改rule的名称
 		sqlStr := "Update `rules` SET `desc` = replace(`desc`, @oldName, @name) Where `rule` = @rule"
 		res := db.Exec(sqlStr, sql.Named("oldName", oldName), sql.Named("name", name), sql.Named("rule", menu.Rule))
-		log.Println(res)
+
 		if res.Error != nil {
 			return res.Error
 		}

@@ -1,7 +1,9 @@
 package router
 
 import (
+	"html/template"
 	"net/http"
+	"redisadmin/internal"
 	baseApi "redisadmin/internal/api/v1"
 	"redisadmin/internal/api/v1/redisAdmin"
 	"redisadmin/internal/consts"
@@ -17,7 +19,6 @@ func Auth(ctx *gin.Context) {
 	if err != nil {
 		ctx.Abort()
 		ctx.JSON(http.StatusUnauthorized, err.Error())
-		ctx.Set("test", "test")
 	}
 
 	// 设置jwt参数
@@ -27,12 +28,16 @@ func Auth(ctx *gin.Context) {
 func SetupRouter() *gin.Engine {
 	r := gin.Default()
 
-	r.LoadHTMLFiles("internal/web/weAdmin/index.html", "internal/web/weAdmin/login.html", "internal/web/weAdmin/pages/redisItem/category.html")
-	r.StaticFS("/static", http.Dir("./internal/web/weAdmin/static"))
-	r.StaticFS("/json", http.Dir("./internal/web/weAdmin/json"))
-	r.StaticFS("/pages", http.Dir("./internal/web/weAdmin/pages"))
-	r.StaticFS("/lib/layui", http.Dir("./internal/web/weAdmin/lib/layui"))
+	// 首页和登录页模板
+	templ := template.Must(template.New("").ParseFS(internal.F, "web/weAdmin/*.html"))
+	r.SetHTMLTemplate(templ)
 
+	r.StaticFS("/static", http.FS(internal.EmbedDir("static")))
+	r.StaticFS("/json", http.FS(internal.EmbedDir("json")))
+	r.StaticFS("/pages", http.FS(internal.EmbedDir("pages")))
+	r.StaticFS("/lib/layui", http.FS(internal.EmbedDir("lib/layui")))
+
+	r.GET("/", baseApi.DealRequest(redisAdmin.ApiRedisList.WebIndex))
 	r.GET("/index", baseApi.DealRequest(redisAdmin.ApiRedisList.WebIndex))
 	r.GET("/index.html", baseApi.DealRequest(redisAdmin.ApiRedisList.WebIndex))
 	r.GET("/login.html", baseApi.DealRequest(redisAdmin.ApiRedisList.WebLogin))
@@ -71,7 +76,6 @@ func SetupRouter() *gin.Engine {
 		v1.DELETE("/redisList/item", baseApi.AuthRule(baseApi.GetBaseRule), baseApi.DealRequest(redisAdmin.ApiRedisList.ItemDelete))
 		v1.GET("/redisList/itemInfo", baseApi.AuthRule(redisAdmin.ApiRedisList.GetAuthRule), baseApi.DealRequest(redisAdmin.ApiRedisList.ItemInfo))
 
-		v1.GET("/redisItem/indexHtml/:typeId", baseApi.AuthRule(redisAdmin.ApiRedisItem.GetAuthRule), baseApi.DealRequest(redisAdmin.ApiRedisItem.IndexHtml))
 		v1.GET("/redisItem/redisList/:typeId", baseApi.AuthRule(redisAdmin.ApiRedisItem.GetAuthRule), baseApi.DealRequest(redisAdmin.ApiRedisItem.GetRdisList))
 		v1.GET("/redisType/:typeId/redisItem/:rdId/keys", baseApi.AuthRule(redisAdmin.ApiRedisItem.GetAuthRule), baseApi.DealRequest(redisAdmin.ApiRedisItem.Keys))
 		v1.GET("/redisType/:typeId/redisItem/:rdId/val", baseApi.AuthRule(redisAdmin.ApiRedisItem.GetAuthRule), baseApi.DealRequest(redisAdmin.ApiRedisItem.GetVal))

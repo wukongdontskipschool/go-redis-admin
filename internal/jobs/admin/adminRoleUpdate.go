@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"fmt"
 	"net/http"
 	"redisadmin/internal/accessControl"
 	"redisadmin/internal/consts"
@@ -13,6 +14,10 @@ import (
 
 func RoleUpdate(rId string, name string, ruleIds map[string]string) (int, gin.H) {
 	db, _ := databases.GetDb(consts.DB_RD_AD_CONF, consts.DB_RD_AD_CONF_TAG_AD)
+
+	if rId == fmt.Sprintf("%d", consts.SUP_ADMIN_RID) {
+		return http.StatusForbidden, gin.H{"msg": "超级管理员包含所有权限"}
+	}
 
 	user := goRedisAdmin.Role{Name: name}
 	tx := db.First(&user, rId)

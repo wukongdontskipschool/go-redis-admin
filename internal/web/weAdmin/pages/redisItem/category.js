@@ -20,11 +20,11 @@ layui.extend({
 	jsonview: '{/}/static/js/extends/jquery.jsonview',
 	treeGird: '{/}/lib/layui/lay/treeGird' // {/}的意思即代表采用自有路径，即不跟随 base 路径
 });
-layui.use(['treeGird', 'jquery', 'admin', 'layer', 'table', 'form', 'jsonview'], function() {
+layui.use(['treeGird', 'jquery', 'admin', 'layer', 'table', 'form', 'jsonview'], function () {
 	layer = layui.layer,
-	$ = jQuery = layui.jquery,
-	admin = layui.admin,
-	treeGird = layui.treeGird;
+		$ = jQuery = layui.jquery,
+		admin = layui.admin,
+		treeGird = layui.treeGird;
 	table = layui.table;
 	form = layui.form;
 
@@ -32,13 +32,13 @@ layui.use(['treeGird', 'jquery', 'admin', 'layer', 'table', 'form', 'jsonview'],
 	rdType = (new URL(window.location.href)).searchParams.getAll('typeId');
 	// redis id
 	rdId = form.val("rdId");
-	
+
 	function getRedisList() {
 		admin.ajax({
 			type: "GET",
 			url: "/v1/redisItem/redisList/" + rdType,
 			data: "",
-			success: function(res) {
+			success: function (res) {
 				$('#rdId').html('');
 				let li = '<option value="">请选择</option>';
 				$('#rdId').append(li);
@@ -59,7 +59,7 @@ layui.use(['treeGird', 'jquery', 'admin', 'layer', 'table', 'form', 'jsonview'],
 			type: "GET",
 			url: "/v1/redisType/" + rdType + "/redisItem/" + rdId + "/keys?db=" + rdDb,
 			data: "",
-			success: function(res) {
+			success: function (res) {
 				for (var i in res['l']) {
 					let li = '<li class="" onclick="getVal(this, ' + rdId + ');" title="' + res['l'][i] + '" style="word-wrap:break-word">' + res['l'][i] + '</li>'
 					$('#keyList').append(li)
@@ -69,7 +69,7 @@ layui.use(['treeGird', 'jquery', 'admin', 'layer', 'table', 'form', 'jsonview'],
 	}
 
 	//触发行单击事件
-	table.on('row(items)', function(obj){
+	table.on('row(items)', function (obj) {
 		// console.log(obj.tr) //得到当前行元素对象
 		// console.log(obj.data) //得到当前行数据
 		// obj.del(); //删除当前行
@@ -80,7 +80,7 @@ layui.use(['treeGird', 'jquery', 'admin', 'layer', 'table', 'form', 'jsonview'],
 	});
 
 	// 切换显示格式
-	form.on('select(showText)', function(data){
+	form.on('select(showText)', function (data) {
 		// console.log(data.elem); //得到select原始DOM对象
 		// console.log(data.value); //得到被选中的值
 		// console.log(data.othis); //得到美化后的DOM对象
@@ -105,16 +105,16 @@ layui.use(['treeGird', 'jquery', 'admin', 'layer', 'table', 'form', 'jsonview'],
 			$("#json").JSONView(JSON.parse(com));
 			// a = PHPSerialize.serialize(JSON.parse(com))
 		}
-	}); 
+	});
 
 	// 切换redis
-	form.on('select(rdIdSelect)', function(data) {
+	form.on('select(rdIdSelect)', function (data) {
 		rdId = data.value
 		getKeys()
 	})
 
 	// 切换库
-	form.on('select(dbSelect)', function(data) {
+	form.on('select(dbSelect)', function (data) {
 		rdDb = data.value
 		getKeys()
 	})
@@ -122,8 +122,7 @@ layui.use(['treeGird', 'jquery', 'admin', 'layer', 'table', 'form', 'jsonview'],
 	getRedisList();
 });
 
-function resetFrom()
-{
+function resetFrom() {
 	$('#valInfo')[0].reset();
 	$('#seyType').text(''); // key 类型
 	$('#items + div').html(''); // 子项列表
@@ -134,8 +133,7 @@ function resetFrom()
 	selectValue = ""; // 选中内容置空
 }
 
-function getVal(elem, rdId)
-{
+function getVal(elem, rdId) {
 	var keyy = $(elem).text()
 	resetFrom();
 
@@ -145,14 +143,13 @@ function getVal(elem, rdId)
 		type: "GET",
 		url: "/v1/redisType/" + rdType + "/redisItem/" + rdId + "/val?key=" + keyy + "&db=" + rdDb,
 		data: "",
-		success: function(res) {
+		success: function (res) {
 			printVal(res)
 		}
 	});
 }
 
-function printVal(res)
-{
+function printVal(res) {
 	$('#seyType').text(res.keyType)
 
 	if (res.keyType == 'string') {
@@ -160,41 +157,41 @@ function printVal(res)
 		$('#content').text(res.data);
 	} else if (res.keyType == 'list') {
 		let cols = [[ //表头
-		  {field: 'id', title: 'index', width:80, fixed: 'left'}
-		  ,{field: 'val', title: 'val'}
+			{ field: 'id', title: 'index', width: 80, fixed: 'left' }
+			, { field: 'val', title: 'val' }
 		]]
 
 		let data = []
 		for (var k in res.data) {
-			id ++
-			let tmep = {'id': k, 'val': res.data[k]}
+			id++
+			let tmep = { 'id': k, 'val': res.data[k] }
 			data[data.length] = tmep
 		}
 		printItem(data, cols)
 	} else if (res.keyType == 'set') {
 		let cols = [[ //表头
-		  {field: 'id', title: '序号', width:80, fixed: 'left'}
-		  ,{field: 'val', title: 'val'}
+			{ field: 'id', title: '序号', width: 80, fixed: 'left' }
+			, { field: 'val', title: 'val' }
 		]]
 
 		let data = []
 		let id = 0
 		for (var k in res.data) {
-			id ++
-			let tmep = {'id': id, 'val': res.data[k]}
+			id++
+			let tmep = { 'id': id, 'val': res.data[k] }
 			data[data.length] = tmep
 		}
 		printItem(data, cols)
 	} else if (res.keyType == 'zset') {
 		let cols = [[ //表头
-		  {field: 'id', title: 'index', width:80, fixed: 'left'}
-		  ,{field: 'subKey', title: 'member'}
-		  ,{field: 'val', title: 'score'}
+			{ field: 'id', title: 'index', width: 80, fixed: 'left' }
+			, { field: 'subKey', title: 'member' }
+			, { field: 'val', title: 'score' }
 		]]
 
 		let data = []
 		for (var k in res.data) {
-			let tmep = {'id': k, 'subKey': res.data[k]['Member'], 'val': res.data[k]['Score']}
+			let tmep = { 'id': k, 'subKey': res.data[k]['Member'], 'val': res.data[k]['Score'] }
 			data[data.length] = tmep
 		}
 		$('#subKey').show();
@@ -203,8 +200,8 @@ function printVal(res)
 		let data = []
 		let id = 0
 		for (var k in res.data) {
-			id ++
-			let tmep = {'id': id, 'subKey': k, 'val': res.data[k]}
+			id++
+			let tmep = { 'id': id, 'subKey': k, 'val': res.data[k] }
 			data[data.length] = tmep
 		}
 		$('#subKey').show();
@@ -212,23 +209,22 @@ function printVal(res)
 	}
 }
 
-function printItem(data, cols)
-{
+function printItem(data, cols) {
 	cols = cols || [[ //表头
-		{field: 'id', title: '序号', width:80, fixed: 'left'},
-		{field: 'subKey', title: 'key'},
-		{field: 'val', title: 'val'}
+		{ field: 'id', title: '序号', width: 80, fixed: 'left' },
+		{ field: 'subKey', title: 'key' },
+		{ field: 'val', title: 'val' }
 	]]
 
 	// 子项列表框显示
-	$('#items + div').show(); 
+	$('#items + div').show();
 
 	table.render({
 		elem: '#items'
-		,height: 193
-		,limit: data.length
-		,cols: cols
-		,data: data
+		, height: 193
+		, limit: data.length
+		, cols: cols
+		, data: data
 		// ,url: '../../demo/table/user/-page=1&limit=30.js' //数据接口
 		// ,page: true //开启分页
 		// ,data: [{'id': 0, 'subkey': 'hiha', 'val': 'hahha'}]

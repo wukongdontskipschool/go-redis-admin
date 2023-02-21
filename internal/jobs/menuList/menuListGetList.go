@@ -29,7 +29,7 @@ func GetList(uId uint) (int, gin.H) {
 		return http.StatusInternalServerError, gin.H{"status": 1, "msg": "没有找到用户"}
 	}
 
-	isSup := uId == consts.SUP_ADMIN_ID
+	isSup := user.RoleId == consts.SUP_ADMIN_RID
 	var list []goRedisAdmin.Menu
 
 	okps := make(map[string]struct{})
@@ -56,6 +56,7 @@ func GetList(uId uint) (int, gin.H) {
 	pid0 := uint(0)
 	data := []menuItemMap{}
 	dataMap := map[uint]menuItemMap{}
+	listDataMap := []menuItemMap{} // 保证排序
 
 	okPid := make(map[uint]struct{})
 	for _, v := range list {
@@ -78,6 +79,8 @@ func GetList(uId uint) (int, gin.H) {
 			"children": []menuItemMap{},
 		}
 
+		listDataMap = append(listDataMap, dataMap[v.ID])
+
 		// 第一级菜单
 		if v.Pid == pid0 {
 			data = append(data, dataMap[v.ID])
@@ -85,7 +88,7 @@ func GetList(uId uint) (int, gin.H) {
 	}
 
 	// 整理子菜单
-	for _, v := range dataMap {
+	for _, v := range listDataMap {
 		pid1, _ := v["pid"].(uint)
 		id1, _ := v["id"].(uint)
 		if pid1 != pid0 {

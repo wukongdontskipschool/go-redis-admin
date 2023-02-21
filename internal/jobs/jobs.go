@@ -52,3 +52,10 @@ func GetRedisConnectConfFromDb(id int) (*redisPool.ConnectConf, error) {
 
 	return conf, nil
 }
+
+// 删除redisDbConf指定redis缓存
+func DelRedisDbConf(id int) {
+	lock.Lock()
+	defer lock.Unlock()
+	delete(redisDbConf, id)
+}

@@ -2,7 +2,9 @@ package redisAdmin
 
 import (
 	baseApi "redisadmin/internal/api/v1"
+	"redisadmin/internal/consts"
 	"redisadmin/internal/jobs/admin"
+	"redisadmin/internal/services/auth"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -61,8 +63,10 @@ func (r *apiAdmin) Update(ctx *gin.Context) (int, gin.H, string) {
 	roleId := ctx.PostForm("roleId")
 	rid, _ := strconv.Atoi(roleId)
 	uIdInt, _ := strconv.Atoi(uId)
+	jwt, _ := ctx.Get(consts.JWT_CLAIMS)
+	jwtObj := jwt.(*auth.JwtClaims)
 
-	httpState, gin_H := admin.UpdateUser(uint(uIdInt), name, pass, uint(rid))
+	httpState, gin_H := admin.UpdateUser(uint(uIdInt), name, pass, uint(rid), jwtObj)
 
 	return httpState, gin_H, ""
 }

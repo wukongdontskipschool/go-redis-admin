@@ -1,7 +1,7 @@
 package accessControl
 
 import (
-	"log"
+	"fmt"
 	"redisadmin/internal/configs"
 	"redisadmin/internal/consts"
 	"redisadmin/internal/databases"
@@ -14,7 +14,7 @@ import (
 
 var Enforcer *casbin.SyncedEnforcer
 
-func init() {
+func load() {
 	var confMap map[string]databases.ConnectConf
 	err := configs.GetConfig(consts.DB_RD_AD_CONF, &confMap)
 	if err != nil {
@@ -29,18 +29,24 @@ func init() {
 	dsn := conf.User + ":" + conf.Pass + "@tcp(" + conf.Host + ":" + strconv.Itoa(conf.Port) + ")/" + conf.Db + "?charset=" + conf.Charset
 	adapter, err := xormadapter.NewAdapter("mysql", dsn, true)
 	if err != nil {
-		log.Printf("连接数据库错误: %v", err)
-		return
+		panic(fmt.Sprintf("连接数据库错误: %v", err))
 	}
 
 	Enforcer, err = casbin.NewSyncedEnforcer(consts.CASBIN_RBAC_CONF, adapter)
 	if err != nil {
-		log.Printf("初始化casbin错误: %v", err)
-		return
+		panic(fmt.Sprintf("初始化casbin错误: %v", err))
 	}
 
 	//从DB加载策略
 	Enforcer.LoadPolicy()
+}
+
+func NewEnforcer() *casbin.SyncedEnforcer {
+	if Enforcer == nil {
+		load()
+	}
+
+	return Enforcer
 }
 
 // 加规则
@@ -88,11 +94,4 @@ func DeletePermissionsForActRule(rule string, act string) (ok bool, err error) {
 // 删除规则权限
 func DeletePermissionsForRule(rule string) (ok bool, err error) {
 	return Enforcer.RemoveFilteredPolicy(1, rule)
-}
-
-func Test(rId string) bool {
-	// a := Enforcer.GetPermissionsForUser(consts.ROLE_PRE + rId)
-	b, _ := Enforcer.RemoveFilteredPolicy(1, rId)
-	log.Println(b)
-	return false
 }

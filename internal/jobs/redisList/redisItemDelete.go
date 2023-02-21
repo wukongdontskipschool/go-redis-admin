@@ -5,6 +5,7 @@ import (
 	"redisadmin/internal/consts"
 	"redisadmin/internal/databases"
 	"redisadmin/internal/databases/goRedisAdmin"
+	"redisadmin/internal/jobs"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,6 +25,8 @@ func ItemDelete(id string) (int, gin.H) {
 	if err != nil {
 		return http.StatusInternalServerError, gin.H{"msg": err.Error()}
 	}
+
+	go jobs.DelRedisDbConf(int(menu.ID))
 
 	return http.StatusOK, gin.H{"data": menu.ID}
 }

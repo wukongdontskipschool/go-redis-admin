@@ -5,6 +5,7 @@ import (
 	"redisadmin/internal/consts"
 	"redisadmin/internal/databases"
 	"redisadmin/internal/databases/goRedisAdmin"
+	"redisadmin/internal/jobs"
 	"redisadmin/internal/services/cryptoAes"
 
 	"github.com/gin-gonic/gin"
@@ -49,6 +50,8 @@ func ItemUpdate(id string, desc string, host string, port string, auth string, h
 	if tx.Error != nil {
 		return http.StatusInternalServerError, gin.H{"msg": tx.Error.Error()}
 	}
+
+	go jobs.DelRedisDbConf(int(redisList.ID))
 
 	return http.StatusOK, gin.H{"data": redisList.ID}
 }

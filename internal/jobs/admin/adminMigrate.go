@@ -18,11 +18,19 @@ func Migrate() {
 	db.AutoMigrate(&goRedisAdmin.RedisListTypes{})
 	db.AutoMigrate(&goRedisAdmin.Menu{})
 
+	InitCasbin(db)
 	InitMenu(db)
 	InitRole(db)
 	InitUser(db)
 	InitRule(db)
 	InitRedisList(db)
+}
+
+func InitCasbin(db *gorm.DB) {
+	tx := db.Exec("truncate table casbin_rule")
+	if tx.Error != nil {
+		panic(tx.Error)
+	}
 }
 
 func InitMenu(db *gorm.DB) {
@@ -72,7 +80,7 @@ func InitMenu(db *gorm.DB) {
 	redisAd := &goRedisAdmin.Menu{
 		Pid:   0,
 		Name:  "redis管理",
-		Url:   "./pages/redisList/index.html",
+		Url:   "",
 		Rule:  "",
 		State: 1,
 	}
@@ -85,8 +93,8 @@ func InitMenu(db *gorm.DB) {
 		{
 			Pid:   redisAd.ID,
 			Name:  "redis分类管理列表",
-			Url:   "./pages/redisList/index.html",
-			Rule:  "/v1/redisList",
+			Url:   "./pages/redisList/type.html",
+			Rule:  "/v1/redisTypeList",
 			State: 1,
 		},
 		{

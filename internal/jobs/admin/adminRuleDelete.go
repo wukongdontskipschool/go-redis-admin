@@ -1,7 +1,6 @@
 package admin
 
 import (
-	"log"
 	"net/http"
 	"redisadmin/internal/accessControl"
 	"redisadmin/internal/consts"
@@ -21,8 +20,6 @@ func RuleDelete(rId string) (int, gin.H) {
 		return http.StatusInternalServerError, gin.H{"msg": tx.Error.Error()}
 	}
 
-	log.Println(rId)
-	log.Println(role)
 	err := db.Transaction(func(tx *gorm.DB) error {
 		// 删规则
 		if res := db.Unscoped().Delete(&role); res.Error != nil {

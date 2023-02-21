@@ -2,7 +2,6 @@ package baseApi
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"redisadmin/internal/accessControl"
 	"redisadmin/internal/consts"
@@ -43,7 +42,7 @@ func AuthRule(rulefunc AuthRuleFunc) gin.HandlerFunc {
 		//获取用户的角色
 		// sub := "role_1"
 		sub := fmt.Sprintf("role_%d", jwtClaims.RId)
-		log.Println(sub, obj, act)
+
 		if ok, _ := accessControl.Authorize(sub, obj, act); !ok {
 			// panic(err)
 			ctx.Abort()

@@ -7,7 +7,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"log"
 	"redisadmin/internal/configs"
 	"redisadmin/internal/consts"
 )
@@ -94,22 +93,4 @@ func pkcs7Unpad(plaintext []byte) ([]byte, error) {
 		return nil, errors.New("长度错误")
 	}
 	return plaintext[:index], nil
-}
-
-func Test() {
-	//16位字符串
-	key := "example16byteske"
-
-	// 原文
-	plaintext := "this is a test"
-
-	// 加密
-	ciphertextHex, err := Encrypt(plaintext, key)
-
-	log.Println(ciphertextHex, err)
-
-	//解密
-	plaintext, err = Decrypt(ciphertextHex, key)
-
-	log.Println(plaintext, err)
 }

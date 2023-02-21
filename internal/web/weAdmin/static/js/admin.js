@@ -516,7 +516,8 @@ layui.define(['jquery', 'form', 'layer', 'element'], function(exports) {
 						option.error(e, msg, codeMsg);
 					} else {
 						console.log('adminerr', codeMsg);
-						layer.msg(codeMsg, {icon: 5});
+						let msg = e.responseJSON.msg != undefined ? e.responseJSON.msg : codeMsg;
+						layer.msg(msg, {icon: 5, time:1000});
 					}
 				}
 			});
