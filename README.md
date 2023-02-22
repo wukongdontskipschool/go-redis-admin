@@ -13,7 +13,7 @@
 
 ### 主要目录结构
 bin // 64位 二进制软件包  
-|
+|  
 cmd  
 | - admin // main.go为入口文件  
 internal  
