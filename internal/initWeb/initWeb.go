@@ -38,10 +38,10 @@ func InitWeb(cmd string) {
 		}
 	}
 
-	// 建表
-	admin.Migrate()
 	// 权限表
 	accessControl.NewEnforcer()
+	// 建表
+	admin.Migrate()
 	log.Println("初始化完毕，超级用户账号：admin初始密码：123456")
 	log.Println("执行" + cmd + " -port=12367指定监听端口")
 }
